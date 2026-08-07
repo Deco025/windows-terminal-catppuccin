@@ -1,28 +1,30 @@
 # windows-terminal-catppuccin
 
-一套 Windows Terminal + PowerShell 7 的 Catppuccin Mocha 配置。
+English | [简体中文](README.zh-CN.md)
+
+A ready-to-run Catppuccin Mocha setup for Windows Terminal + PowerShell 7, with a one-click installer.
 
 ![screenshot](assets/screenshot.png)
 
-## 包含什么
+## What you get
 
-| 层 | 内容 |
+| Layer | Contents |
 |---|---|
-| 终端外观 | Catppuccin Mocha 配色、亚克力半透明、无缝标签栏、竖线光标、隐藏滚动条 |
-| 字体 | Maple Mono NF（Nerd Font），中文经字体回退链落到 Microsoft YaHei UI |
-| 提示符 | oh-my-posh，显示 git 分支与工作区状态、conda 环境、命令耗时、错误码 |
-| Shell | PowerShell 7 + PSReadLine 历史预测（灰字补全 + 列表视图） |
-| 杂项 | `ls` 文件类型图标（Terminal-Icons）、开机 fastfetch 信息图 |
+| Terminal | Catppuccin Mocha colors, acrylic translucency, seamless tab bar, bar cursor, hidden scrollbar |
+| Font | Maple Mono NF (Nerd Font); CJK text falls back to Microsoft YaHei UI |
+| Prompt | oh-my-posh with git branch/status, conda environment, command duration, exit code |
+| Shell | PowerShell 7 + PSReadLine history prediction (gray inline + list view) |
+| Extras | Terminal-Icons for `ls`, fastfetch system info on new windows |
 
-「无缝标签栏」来自主题里的 `tab.background: "terminalBackground"` —— 活动标签底色跟终端背景完全一致，标签栏和内容区之间那条分界线会消失。
+The seamless tab bar is one line. The theme sets the active tab background to `tab.background: "terminalBackground"`, so the tab blends with the terminal background and the divider disappears.
 
-## 依赖
+## Prerequisites
 
-- Windows Terminal **1.20+**（字体回退链需要）；本配置在 1.24 上验证
-- [scoop](https://scoop.sh)
-- 可选：conda（配置会自动探测，没装就跳过）
+- Windows Terminal 1.21 or newer. Font fallback chains and the `tabRow` / `tab` theme keys were added in this release. Verified on 1.24.
+- [scoop](https://scoop.sh). The script does not install scoop and exits if it cannot find it.
+- conda is optional. The script auto-detects standard install paths and skips it otherwise.
 
-## 安装
+## Install
 
 ```powershell
 git clone https://github.com/Deco025/windows-terminal-catppuccin.git
@@ -30,87 +32,93 @@ cd windows-terminal-catppuccin
 .\install.ps1
 ```
 
-脚本会装齐 pwsh / oh-my-posh / fastfetch / Maple Mono NF / Terminal-Icons，把三个配置文件放到位，并关掉 conda 自带的 `(base)` 前缀（否则会和 oh-my-posh 的 python 段重复显示）。**覆盖任何已有文件之前都会先备份成 `*.bak-<时间戳>`。**
+The script installs pwsh / oh-my-posh / fastfetch / Maple Mono NF / Terminal-Icons, copies the three config files, and disables conda's `(base)` prefix so it does not duplicate the oh-my-posh python segment. Existing files are backed up as `*.bak-<timestamp>` before being overwritten.
 
-装完**新开一个 Windows Terminal 窗口** —— 根级 `theme` 只在新窗口生效，开新标签不行。
+Open a new Windows Terminal window afterwards. The root-level `theme` applies to new windows only; a new tab is not enough.
 
-### 手动安装
+If the execution policy blocks the script:
 
-| 仓库里的文件 | 放到 |
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+```
+
+Add `-Force` to skip the confirmation prompt.
+
+### Manual install
+
+| File | Destination |
 |---|---|
 | `windows-terminal/settings.json` | `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json` |
-| `powershell/Microsoft.PowerShell_profile.ps1` | `$PROFILE`（即 `~\Documents\PowerShell\`，**不是** `WindowsPowerShell`） |
+| `powershell/Microsoft.PowerShell_profile.ps1` | `$PROFILE` (run `echo $PROFILE` in PowerShell 7 to confirm the path) |
 | `oh-my-posh/catppuccin_mocha.omp.json` | `~\.config\oh-my-posh\` |
 
-主题放 `~/.config` 而不是直接改 oh-my-posh 自带的那份，是为了让 `scoop update oh-my-posh` 不会把它覆盖掉。
+The theme is installed as a separate copy under `~/.config` so `scoop update oh-my-posh` will not overwrite it.
 
-## 常用调整
+### Install with an AI assistant
 
-**透明度** —— `settings.json` 里 `profiles.defaults.opacity`，85 是折中值，想更透就调到 70，不喜欢就把 `useAcrylic` 改成 `false`。
+Send the repo link to an AI assistant that can run terminal commands and ask it to execute:
 
-**中文严格等宽** —— Maple Mono NF 不含 CJK 字形，中文是靠 `font.face` 里的回退链渲染的。想要中文严格 2:1 对齐，换成带 CJK 的版本：
+```powershell
+git clone https://github.com/Deco025/windows-terminal-catppuccin.git
+cd windows-terminal-catppuccin
+pwsh -NoProfile -ExecutionPolicy Bypass -File .\install.ps1 -Force
+```
+
+This works when scoop and Windows Terminal are already installed and scoop lives at the default `%USERPROFILE%\scoop`. If scoop is missing the script exits; if Windows Terminal is missing it skips settings.json; if scoop lives in a custom directory the hard-coded pwsh path in settings.json breaks. Machines with a custom scoop directory or OneDrive-redirected Documents may need manual adjustment.
+
+## Common tweaks
+
+**Opacity**. `profiles.defaults.opacity` in settings.json. 85 is the default compromise, 70 is more transparent, and `useAcrylic: false` disables acrylic.
+
+**Strict CJK width**. Maple Mono NF has no CJK glyphs; Chinese renders through the fallback chain in `font.face`. For strict 2:1 alignment install the CJK version and set `font.face` to `"Maple Mono NF CN"`:
 
 ```powershell
 scoop install nerd-fonts/Maple-Mono-NF-CN
 ```
 
-然后把 `font.face` 改成 `"Maple Mono NF CN"`。
+**Prompt theme**. `Get-ChildItem $env:POSH_THEMES_PATH` lists the 100+ themes shipped with oh-my-posh; change the `--config` line in the profile.
 
-**换提示符主题** —— `Get-ChildItem $env:POSH_THEMES_PATH` 看 oh-my-posh 自带的一百多套，改 profile 里那行 `--config` 即可。
-
-**本机专有路径** —— profile 会加载 `~/.config/pwsh/local.ps1`（不入库）。conda 装在非标准位置时，在里面写：
+**Machine-specific paths**. The profile loads `~/.config/pwsh/local.ps1`, which is not committed. For non-standard conda installs put the following there:
 
 ```powershell
 $CondaExe = 'E:\somewhere\miniconda3\Scripts\conda.exe'
 ```
 
-## 两个值得记一笔的坑
+## Known issues
 
-### 1. conda 在 PowerShell 7 下会完全失效
+### conda fails in PowerShell 7 with `invalid choice: ''`
 
-从 5.1 换到 7 之后 `conda activate` 直接报错：
+After moving from PowerShell 5.1 to 7, `conda activate` may fail with:
 
 ```
 conda-script.py: error: argument COMMAND: invalid choice: ''
 ```
 
-问题出在 conda 的 PowerShell hook，它是这样调 conda 的：
+conda's PowerShell hook invokes:
 
 ```powershell
 & $Env:CONDA_EXE $Env:_CE_M $Env:_CE_CONDA shell.powershell activate <env>
 ```
 
-`_CE_M` / `_CE_CONDA` 只有在 conda 以 `python -m conda` 方式运行时才有值，正常安装下它们是**空字符串**。而：
+`_CE_M` and `_CE_CONDA` are normally empty strings. PowerShell 5.1 drops empty-string arguments; PowerShell 7's Standard mode passes them through, so conda receives an empty first argument and parses it as COMMAND.
 
-- PowerShell 5.1 会把空字符串参数**丢弃**
-- PowerShell 7 默认的 `Standard` 参数传递模式会把它**原样传出去**
-
-于是 `conda.exe` 收到的第一个参数是 `""`，被当作 COMMAND 解析，报错。
-
-**解决**：profile 里加一行，切回 5.1 的参数传递语义。
+The profile already contains the fix:
 
 ```powershell
 $PSNativeCommandArgumentPassing = 'Legacy'
 ```
 
-另外两种看起来可行、实测**不行**的做法：
+Newer conda versions fixed the root cause (24.9+; PowerShell 7.5 requires 25.1.1+). After upgrading, you can remove the line and test.
 
-- 在 hook 之后 `Remove-Item Env:_CE_M, Env:_CE_CONDA` —— 只能生效一次。`conda activate` 内部会重新执行 hook，把这两个变量又设回空字符串。
-- 把 `$PSNativeCommandArgumentPassing = 'Legacy'` 放进包住 `Invoke-Conda` 的包装函数里 —— 这个偏好变量对原生命令调用不按动态作用域生效，完全不起作用。
+### `intenseTextStyle` must be `all`, not `bright`
 
-conda 24.x 已修复此问题，升级后可以删掉那一行。
+The official Catppuccin palette maps the eight bright colors to the same values as their normal counterparts, `brightRed` equals `red`, and so on. With `"bright"`, all `ESC[1m` emphasized text, such as `ls` headers, `git status` titles, and `--help` section names, looks identical to normal text. `"all"` enables Maple Mono NF's bold face.
 
-### 2. `intenseTextStyle` 要设成 `all` 而不是 `bright`
+The two color rows at the bottom of the fastfetch output look like one row for the same reason. Normal and bright colors are just identical.
 
-官方 Catppuccin 配色把 8 个亮色映射成了和普通色**完全相同**的值（`brightRed` = `red` = `#F38BA8`，八个都这样）。
+## Uninstall / rollback
 
-所以如果按传统习惯设成 `"bright"`，终端里所有 `ESC[1m`（加粗/强调）的文本 —— `ls` 的表头、`git status` 的标题行、各种 `--help` 的小节名 —— 会和普通文本长得一模一样，强调效果被彻底抹平。设成 `"all"` 才会用上 Maple Mono NF 的 Bold 字面。
-
-（fastfetch 底部那两行色块看起来只有一行，也是这个原因 —— 其实是普通色和亮色两行，只是完全相同。）
-
-## 卸载 / 回滚
-
-`install.ps1` 会把原文件备份成 `*.bak-<时间戳>`，改回去即可。另外：
+`install.ps1` backs up existing files as `*.bak-<timestamp>`. To remove the rest:
 
 ```powershell
 conda config --set changeps1 True
@@ -118,10 +126,6 @@ scoop uninstall pwsh oh-my-posh fastfetch
 Uninstall-Module Terminal-Icons
 ```
 
-## 致谢
+## Credits
 
-[Catppuccin](https://github.com/catppuccin/windows-terminal) ·
-[oh-my-posh](https://ohmyposh.dev) ·
-[Maple Mono](https://github.com/subframe7536/maple-font) ·
-[fastfetch](https://github.com/fastfetch-cli/fastfetch) ·
-[Terminal-Icons](https://github.com/devblackops/Terminal-Icons)
+[Catppuccin](https://github.com/catppuccin/windows-terminal) · [oh-my-posh](https://ohmyposh.dev) · [Maple Mono](https://github.com/subframe7536/maple-font) · [fastfetch](https://github.com/fastfetch-cli/fastfetch) · [Terminal-Icons](https://github.com/devblackops/Terminal-Icons)
