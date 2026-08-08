@@ -14,7 +14,7 @@
 | 字体 | Maple Mono NF（Nerd Font），中文经回退链落到 Microsoft YaHei UI |
 | 提示符 | oh-my-posh，显示 git 分支与工作区状态、conda 环境、命令耗时、错误码 |
 | Shell | PowerShell 7 + PSReadLine 历史预测（灰字补全 + 列表视图） |
-| 杂项 | `ls` 文件类型图标（Terminal-Icons）、新窗口打开时的 fastfetch 信息图 |
+| 杂项 | `ls` 文件类型图标（Terminal-Icons）、新窗口打开时的 fastfetch 信息图（四色 Windows logo） |
 
 「无缝标签栏」的实现只有一行。主题里把活动标签底色设成 `tab.background: "terminalBackground"`，标签与终端背景同色，标签栏和内容区之间的分界线就消失了。
 
@@ -79,6 +79,8 @@ scoop install nerd-fonts/Maple-Mono-NF-CN
 再把 `font.face` 改成 `"Maple Mono NF CN"`。
 
 **换提示符主题**。`Get-ChildItem $env:POSH_THEMES_PATH` 看 oh-my-posh 自带的一百多套，改 profile 里那行 `--config`。
+
+**fastfetch logo 颜色**。四色 Windows logo 的颜色定义在 `~/.config/fastfetch/config.jsonc` 的 `logo.color` 1 到 4 号位，想换色改这个文件。
 
 **本机专有路径**。profile 会加载 `~/.config/pwsh/local.ps1`，这个文件不入库。conda 装在非标准位置时，在文件里写下面这行。
 

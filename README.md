@@ -14,7 +14,7 @@ A ready-to-run Catppuccin Mocha setup for Windows Terminal + PowerShell 7, with 
 | Font | Maple Mono NF (Nerd Font); CJK text falls back to Microsoft YaHei UI |
 | Prompt | oh-my-posh with git branch/status, conda environment, command duration, exit code |
 | Shell | PowerShell 7 + PSReadLine history prediction (gray inline + list view) |
-| Extras | Terminal-Icons for `ls`, fastfetch system info on new windows |
+| Extras | Terminal-Icons for `ls`, fastfetch system info with a four-color Windows logo |
 
 The seamless tab bar is one line. The theme sets the active tab background to `tab.background: "terminalBackground"`, so the tab blends with the terminal background and the divider disappears.
 
@@ -77,6 +77,8 @@ scoop install nerd-fonts/Maple-Mono-NF-CN
 ```
 
 **Prompt theme**. `Get-ChildItem $env:POSH_THEMES_PATH` lists the 100+ themes shipped with oh-my-posh; change the `--config` line in the profile.
+
+**fastfetch logo colors**. The four-pane Windows logo uses the Windows brand palette, defined in `~/.config/fastfetch/config.jsonc` under `logo.color` slots 1-4. Edit that file to change the colors.
 
 **Machine-specific paths**. The profile loads `~/.config/pwsh/local.ps1`, which is not committed. For non-standard conda installs put the following there:
 

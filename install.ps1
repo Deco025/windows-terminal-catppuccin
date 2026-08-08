@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     安装 pwsh / oh-my-posh / fastfetch / Maple Mono NF / Terminal-Icons，
-    并把仓库里的 settings.json、PowerShell profile、oh-my-posh 主题放到位。
+    并把仓库里的 settings.json、PowerShell profile、oh-my-posh 主题、fastfetch 配色配置放到位。
     覆盖任何已有文件之前都会先备份成 *.bak-yyyyMMddHHmmss。
 
 .PARAMETER Force
@@ -92,6 +92,9 @@ Install-File "$root\powershell\Microsoft.PowerShell_profile.ps1" `
 # oh-my-posh 主题：放 ~/.config 下，scoop update oh-my-posh 不会覆盖它
 Install-File "$root\oh-my-posh\catppuccin_mocha.omp.json" `
              "$HOME\.config\oh-my-posh\catppuccin_mocha.omp.json"
+# fastfetch 配置：内置 Windows 11 logo 换成四色
+Install-File "$root\fastfetch\config.jsonc" `
+             "$HOME\.config\fastfetch\config.jsonc"
 
 # ---------------------------------------------------------------- conda
 Say "`n[5/5] conda"
