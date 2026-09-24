@@ -1,8 +1,16 @@
 # windows-terminal-catppuccin
 
+中文 | **[English](README_EN.md)**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-F5C2E7.svg)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/Deco025/windows-terminal-catppuccin?style=flat&color=F9E2AF)](https://github.com/Deco025/windows-terminal-catppuccin/stargazers)
+[![Platform: Windows Terminal](https://img.shields.io/badge/Platform-Windows%20Terminal-89B4FA.svg)](https://aka.ms/terminal)
+
 一套 Windows Terminal + PowerShell 7 的 Catppuccin Mocha 配置。
 
 ![screenshot](assets/screenshot.png)
+
+![demo](assets/demo.gif)
 
 ## 包含什么
 
@@ -30,7 +38,7 @@ cd windows-terminal-catppuccin
 .\install.ps1
 ```
 
-脚本会装齐 pwsh / oh-my-posh / fastfetch / Maple Mono NF / Terminal-Icons，把三个配置文件放到位，并关掉 conda 自带的 `(base)` 前缀（否则会和 oh-my-posh 的 python 段重复显示）。**覆盖任何已有文件之前都会先备份成 `*.bak-<时间戳>`。**
+脚本会装齐 pwsh / oh-my-posh / fastfetch / Maple Mono NF / Terminal-Icons，把三个配置文件放到位，并关掉 conda 自带的 `(base)` 前缀（否则会和 oh-my-posh 的 python 段重复显示）。profile 的真实路径直接向 pwsh 询问，所以开了 OneDrive 文档备份的机器也能装对位置。**覆盖任何已有文件之前都会先备份成 `*.bak-<时间戳>`。**
 
 装完**新开一个 Windows Terminal 窗口** —— 根级 `theme` 只在新窗口生效，开新标签不行。
 
@@ -39,7 +47,7 @@ cd windows-terminal-catppuccin
 | 仓库里的文件 | 放到 |
 |---|---|
 | `windows-terminal/settings.json` | `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json` |
-| `powershell/Microsoft.PowerShell_profile.ps1` | `$PROFILE`（即 `~\Documents\PowerShell\`，**不是** `WindowsPowerShell`） |
+| `powershell/Microsoft.PowerShell_profile.ps1` | `$PROFILE`（通常是 `~\Documents\PowerShell\`，**不是** `WindowsPowerShell`；开了 OneDrive 文档备份则在 `~\OneDrive\Documents\PowerShell\`） |
 | `oh-my-posh/catppuccin_mocha.omp.json` | `~\.config\oh-my-posh\` |
 
 主题放 `~/.config` 而不是直接改 oh-my-posh 自带的那份，是为了让 `scoop update oh-my-posh` 不会把它覆盖掉。
@@ -108,6 +116,16 @@ conda 24.x 已修复此问题，升级后可以删掉那一行。
 
 （fastfetch 底部那两行色块看起来只有一行，也是这个原因 —— 其实是普通色和亮色两行，只是完全相同。）
 
+### 3. fastfetch 内置 logo 的配色不生效（Windows）
+
+给 `windows11` 内置 logo 配 `logo.color`（或用 `--logo-color-1` 等 CLI 参数）在 2.66 ~ 2.68 的 Windows 版上**完全不生效** —— logo 里的 `$1`~`$4` 颜色占位符没有被替换成转义序列，整个 logo 用默认前景色渲染，四色 Windows 标志变成一片灰。模块文字的颜色（key、色块）都正常，只有 logo 不行。
+
+**绕过**：不用 `$N` 占位符，直接把 ANSI 真彩色序列嵌进 logo 文件。本仓库的 [`fastfetch/win11-logo.txt`](fastfetch/win11-logo.txt) 就是内嵌了四色（`#F25022` / `#7FBA00` / `#00A4EF` / `#FFB900`）的 Windows 11 logo，在 fastfetch 配置里改成文件 logo 即可：
+
+```jsonc
+"logo": { "type": "file", "source": "~/.config/fastfetch/win11-logo.txt" }
+```
+
 ## 卸载 / 回滚
 
 `install.ps1` 会把原文件备份成 `*.bak-<时间戳>`，改回去即可。另外：
@@ -117,6 +135,10 @@ conda config --set changeps1 True
 scoop uninstall pwsh oh-my-posh fastfetch
 Uninstall-Module Terminal-Icons
 ```
+
+## License
+
+[MIT](LICENSE)
 
 ## 致谢
 

@@ -62,6 +62,10 @@ Ok "scoop 包安装完毕"
 
 Say "`n[3/5] 安装 Terminal-Icons 模块（装到 PowerShell 7 的模块路径下）"
 $pwshExe = (Get-Command pwsh -ErrorAction SilentlyContinue).Source
+if (-not $pwshExe -and (Test-Path "$HOME\scoop\shims\pwsh.exe")) {
+    # 上一步刚装的 pwsh 不在当前进程的 PATH 里，直接找 scoop 的 shim
+    $pwshExe = "$HOME\scoop\shims\pwsh.exe"
+}
 if ($pwshExe) {
     & $pwshExe -NoProfile -Command "if (-not (Get-Module -ListAvailable Terminal-Icons)) { Install-Module Terminal-Icons -Scope CurrentUser -Force -Repository PSGallery }"
     Ok "Terminal-Icons"
@@ -86,8 +90,17 @@ if ($wtTarget) {
 }
 
 # PowerShell 7 profile（注意不是 WindowsPowerShell 那个目录）
-Install-File "$root\powershell\Microsoft.PowerShell_profile.ps1" `
-             "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
+# 直接向 pwsh 要 $PROFILE 的真实路径：开了 OneDrive 文档备份的机器，
+# Documents 被重定向到 OneDrive 下，硬编码 $HOME\Documents 会装错位置。
+$profileTarget = $null
+if ($pwshExe) {
+    $profileTarget = (& $pwshExe -NoProfile -Command '$PROFILE' 2>$null | Out-String).Trim()
+}
+if (-not $profileTarget) {
+    Warn "无法从 pwsh 获取 `$PROFILE，退回 Documents 目录猜测"
+    $profileTarget = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'PowerShell\Microsoft.PowerShell_profile.ps1'
+}
+Install-File "$root\powershell\Microsoft.PowerShell_profile.ps1" $profileTarget
 
 # oh-my-posh 主题：放 ~/.config 下，scoop update oh-my-posh 不会覆盖它
 Install-File "$root\oh-my-posh\catppuccin_mocha.omp.json" `
