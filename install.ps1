@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     安装 pwsh / oh-my-posh / fastfetch / Maple Mono NF / Terminal-Icons，
-    并把仓库里的 settings.json、PowerShell profile、oh-my-posh 主题放到位。
+    并把仓库里的 settings.json、PowerShell profile、oh-my-posh 主题、fastfetch 配色配置放到位。
     覆盖任何已有文件之前都会先备份成 *.bak-yyyyMMddHHmmss。
 
 .PARAMETER Force
@@ -105,6 +105,17 @@ Install-File "$root\powershell\Microsoft.PowerShell_profile.ps1" $profileTarget
 # oh-my-posh 主题：放 ~/.config 下，scoop update oh-my-posh 不会覆盖它
 Install-File "$root\oh-my-posh\catppuccin_mocha.omp.json" `
              "$HOME\.config\oh-my-posh\catppuccin_mocha.omp.json"
+# fastfetch 配置 + 内嵌 ANSI 真彩色的四色 Windows logo
+#（内置 logo 的 logo.color 在 Windows 版 2.66~2.68 上不生效，故用文件 logo 绕过）
+Install-File "$root\fastfetch\config.jsonc" `
+             "$HOME\.config\fastfetch\config.jsonc"
+Install-File "$root\fastfetch\win11-logo.txt" `
+             "$HOME\.config\fastfetch\win11-logo.txt"
+# 把配置里的 ~ 占位改写成绝对路径，避免不同版本对 ~ 展开行为不一致
+$ffCfg = "$HOME\.config\fastfetch\config.jsonc"
+$ffHome = $HOME -replace '\\', '/'
+$ffBody = (Get-Content $ffCfg -Raw -Encoding UTF8) -replace [regex]::Escape('~/.config/fastfetch/'), "$ffHome/.config/fastfetch/"
+[System.IO.File]::WriteAllText($ffCfg, $ffBody, (New-Object System.Text.UTF8Encoding($false)))
 
 # ---------------------------------------------------------------- conda
 Say "`n[5/5] conda"
